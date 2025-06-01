@@ -1,0 +1,105 @@
+<!-- 
+PROMPT: 
+/add test_bouncing_ball.html
+
+ Write a web app inside test_bouncing_ball.html that shows a ball bouncing inside a spinning hexagon. The ball should be
+ affected by gravity an  friction, and it must bounce off the rotating walls realistically. Build it only using HTML, CSS and V
+anilla JS
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bouncing Ball in Spinning Hexagon</title>
+  <style>
+    body {
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #hexagon {
+      width: 200px;
+      height: 200px;
+      transform: rotate(0deg);
+      animation: spin 5s linear infinite;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #ball {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <svg id="hexagon" viewBox="0 0 200 200">
+    <polygon id="hex" points="100,0 186.6,86.6 186.6,113.4 100,200 13.4,113.4 13.4,86.6" />
+  </svg>
+  <div id="ball"></div>
+
+  <script>
+    const ball = document.getElementById('ball');
+    const hex = document.getElementById('hex');
+
+    // Hexagon points (centered at 100,100)
+    const hexPoints = hex.getAttribute('points').split(' ').map(p => {
+      const [x, y] = p.split(',').map(Number);
+      return { x, y };
+    });
+
+    // Ball physics
+    let ballPos = { x: 100, y: 100 };
+    let velocity = { x: 2, y: 2 };
+    const gravity = 0.1;
+    const friction = 0.99;
+
+    function updateBall() {
+      // Apply gravity
+      velocity.y += gravity;
+      
+      // Update position
+      ballPos.x += velocity.x;
+      ballPos.y += velocity.y;
+
+      // Bounce off walls (static hexagon)
+      const margin = 10;
+      if (ballPos.x < margin || ballPos.x > 190) {
+        velocity.x *= -1;
+        ballPos.x = Math.max(margin, Math.min(190, ballPos.x));
+      }
+      if (ballPos.y < margin || ballPos.y > 190) {
+        velocity.y *= -1;
+        ballPos.y = Math.max(margin, Math.min(190, ballPos.y));
+      }
+
+      // Apply friction
+      velocity.x *= friction;
+      velocity.y *= friction;
+
+      // Update position
+      ball.style.left = `${ballPos.x}px`;
+      ball.style.top = `${ballPos.y}px`;
+    }
+
+    // Animate
+    setInterval(updateBall, 16);
+  </script>
+</body>
+</html>

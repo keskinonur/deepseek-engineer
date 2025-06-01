@@ -1,22 +1,22 @@
-# DeepSeek Engineer v2 🐋
+# DeepSeek Engineer v2 🐋🦙
 
 ## Overview
 
-DeepSeek Engineer v2 is a powerful AI-powered coding assistant that provides an interactive terminal interface for seamless code development. It integrates with DeepSeek's advanced reasoning models to offer intelligent file operations, code analysis, and development assistance through natural conversation and function calling.
+DeepSeek Engineer v2 is a powerful AI-powered coding assistant that provides an interactive terminal interface for seamless code development. Now supports both **DeepSeek's advanced reasoning models** and **local Ollama models**, offering intelligent file operations, code analysis, and development assistance through natural conversation and function calling.
 
-## 🚀 Latest Update: Function Calling Architecture
+## 🚀 Latest Update: Multi-Provider Support
 
-**Version 2.0** introduces a big upgrade from structured JSON output to native function calling, providing:
-- **Natural conversations** with the AI without rigid response formats
-- **Automatic file operations** through intelligent function calls
-- **Real-time reasoning visibility** with Chain of Thought (CoT) capabilities
-- **Enhanced reliability** and better error handling
+**Version 2.1** now supports both cloud and local AI providers:
+- **🐋 DeepSeek**: Advanced reasoning models with Chain of Thought capabilities
+- **🦙 Ollama**: Local models for privacy, offline work, and cost-free usage
+- **Seamless switching** between providers with simple configuration
+- **Unified interface** - same powerful features regardless of provider
 
 ## Key Features
 
 ### 🧠 **AI Capabilities**
 - **Elite Software Engineering**: Decades of experience across all programming domains
-- **Chain of Thought Reasoning**: Visible thought process before providing solutions
+- **Chain of Thought Reasoning**: Visible thought process (DeepSeek) or efficient processing (Ollama)
 - **Code Analysis & Discussion**: Expert-level insights and optimization suggestions
 - **Intelligent Problem Solving**: Automatic file reading and context understanding
 
@@ -44,6 +44,20 @@ The AI can automatically execute these operations when needed:
 - Precise snippet-based file editing
 - Safe replacement with exact matching
 
+### 🔄 **Multi-Provider Support**
+
+#### **🐋 DeepSeek (Cloud)**
+- Advanced reasoning with visible Chain of Thought
+- Latest DeepSeek-R1 model capabilities
+- Requires API key and internet connection
+- Excellent for complex reasoning tasks
+
+#### **🦙 Ollama (Local)**
+- Complete privacy - everything runs locally
+- No API costs or internet required (after model download)
+- Supports popular models: llama3.2, mistral, codellama, etc.
+- Great for sensitive codebases or offline development
+
 ### 📁 **File Operations**
 
 #### **Automatic File Reading (Recommended)**
@@ -61,13 +75,12 @@ For when you want to preload files into conversation context:
 - **`/add path/to/file`** - Include single file in conversation context
 - **`/add path/to/folder`** - Include entire directory (with smart filtering)
 
-**Note**: The `/add` command is mainly useful when you want to provide extra context upfront. The AI can read files automatically via function calls whenever needed during the conversation.
-
 ### 🎨 **Rich Terminal Interface**
 - **Color-coded feedback** (green for success, red for errors, yellow for warnings)
-- **Real-time streaming** with visible reasoning process
+- **Real-time streaming** with visible reasoning process (DeepSeek)
 - **Structured tables** for diff previews
 - **Progress indicators** for long operations
+- **Provider-aware interface** showing current AI provider
 
 ### 🛡️ **Security & Safety**
 - **Path normalization** and validation
@@ -78,8 +91,10 @@ For when you want to preload files into conversation context:
 ## Getting Started
 
 ### Prerequisites
-1. **DeepSeek API Key**: Get your API key from [DeepSeek Platform](https://platform.deepseek.com)
-2. **Python 3.11+**: Required for optimal performance
+- **Python 3.11+**: Required for optimal performance
+- **Choose your AI provider**:
+  - **DeepSeek**: Get API key from [DeepSeek Platform](https://platform.deepseek.com)
+  - **Ollama**: Install from [Ollama.ai](https://ollama.ai)
 
 ### Installation
 
@@ -89,11 +104,31 @@ For when you want to preload files into conversation context:
    cd deepseek-engineer
    ```
 
-2. **Set up environment**:
-   ```bash
-   # Create .env file
-   echo "DEEPSEEK_API_KEY=your_api_key_here" > .env
-   ```
+2. **Choose your setup method**:
+
+#### Option A: DeepSeek (Cloud) Setup
+```bash
+# Create .env file for DeepSeek
+echo "AI_PROVIDER=deepseek" > .env
+echo "DEEPSEEK_API_KEY=your_api_key_here" >> .env
+```
+
+#### Option B: Ollama (Local) Setup
+```bash
+# Install Ollama (if not already installed)
+# Visit https://ollama.ai for installation instructions
+
+# Start Ollama service
+ollama serve
+
+# Pull a model (in another terminal)
+ollama pull qwen3:8b
+
+# Create .env file for Ollama
+echo "AI_PROVIDER=ollama" > .env
+echo "OLLAMA_MODEL=qwen3:8b" >> .env
+echo "OLLAMA_BASE_URL=http://localhost:11434/v1" >> .env
+```
 
 3. **Install dependencies** (choose one method):
 
@@ -109,13 +144,42 @@ For when you want to preload files into conversation context:
    python3 deepseek-eng.py
    ```
 
-### Usage Examples
+### Configuration Options
 
-#### **Natural Conversation with Automatic File Operations**
+Create a `.env` file with your preferred settings:
+
+```bash
+# AI Provider (required)
+AI_PROVIDER=ollama  # or "deepseek"
+
+# DeepSeek Settings (if using DeepSeek)
+DEEPSEEK_API_KEY=your_api_key_here
+DEEPSEEK_MODEL=deepseek-reasoner
+
+# Ollama Settings (if using Ollama)
+OLLAMA_MODEL=llama3.2  # or mistral, codellama, etc.
+OLLAMA_BASE_URL=http://localhost:11434/v1
+```
+
+## Usage Examples
+
+### **Provider Commands**
+```
+You> /provider
+→ Shows current AI provider and model
+
+You> /ollama
+→ Instructions to switch to Ollama
+
+You> /deepseek
+→ Instructions to switch to DeepSeek
+```
+
+### **Natural Conversation with Automatic File Operations**
 ```
 You> Can you read the main.py file and create a test file for it?
 
-💭 Reasoning: I need to first read the main.py file to understand its structure...
+🦙 Ollama thinking...  # or 🐋 DeepSeek thinking...
 
 🤖 Assistant> I'll read the main.py file first to understand its structure.
 ⚡ Executing 1 function call(s)...
@@ -131,11 +195,9 @@ Now I'll create comprehensive tests based on the code structure I found.
 I've analyzed main.py and created comprehensive tests covering all the main functions...
 ```
 
-#### **Automatic Multi-File Analysis**
+### **Automatic Multi-File Analysis**
 ```
 You> Compare the implementation in utils.py with the tests in test_utils.py
-
-💭 Reasoning: I need to read both files to compare them...
 
 🤖 Assistant> I'll read both files to analyze the implementation and tests.
 ⚡ Executing 1 function call(s)...
@@ -146,42 +208,62 @@ You> Compare the implementation in utils.py with the tests in test_utils.py
 After analyzing both files, I can see several areas where the tests could be improved...
 ```
 
-#### **Manual Context Loading (Optional)**
+## Provider Comparison
+
+| Feature | DeepSeek 🐋 | Ollama 🦙 |
+|---------|-------------|-----------|
+| **Cost** | Pay per use | Free after model download |
+| **Privacy** | Cloud-based | 100% local |
+| **Internet** | Required | Not required (after setup) |
+| **Reasoning** | Chain of Thought visible | Efficient processing |
+| **Models** | DeepSeek-R1, specialized reasoning | llama3.2, mistral, codellama, etc. |
+| **Setup** | API key only | Install + model download |
+| **Performance** | Optimized for reasoning | Depends on local hardware |
+
+## Supported Ollama Models
+
+**Recommended models with function calling support:**
+
+- **🧠 qwen3:8b** - Latest Qwen model with excellent reasoning (recommended)
+- **🔧 devstral:24b** - Specialized coding model by Mistral (large, excellent for complex tasks)
+- **💻 qwen2.5-coder:7b** - Code-focused Qwen model (programming specialist)
+- **⚡ llama3.2:3b** - Lightweight and fast (resource efficient)
+- **🎯 mixtral:8x7b** - Mixture of experts, very capable (advanced reasoning)
+- **🌟 mistral-small3.1:latest** - Latest Mistral small model
+- **🔥 mistral:7b** - General purpose, good balance
+- **📚 qwen2.5:7b** - Previous Qwen generation, solid performance
+
+**🔍 Find more tool-compatible models:** [Ollama Tools Search](https://ollama.com/search?c=tools)
+
+> **Note**: Only models with function calling support can perform file operations. Visit the link above to browse all compatible models in the Ollama library.
+
+### Model Installation
+```bash
+# List available models
+ollama list
+
+# Pull recommended models
+ollama pull qwen3:8b               # Latest, excellent reasoning
+ollama pull devstral:24b           # Large coding specialist  
+ollama pull qwen2.5-coder:7b       # Code-focused
+ollama pull llama3.2:3b            # Lightweight option
+ollama pull mixtral:8x7b           # Advanced reasoning
+
+# Use in .env file
+OLLAMA_MODEL=qwen3:8b
 ```
-You> /add src/
 
-✓ Added folder 'src/' to conversation.
-📁 Added files: (15 files)
-  📄 src/utils.py
-  📄 src/models.py
-  ...
+**Model Selection Guide:**
+- **For general coding**: `qwen3:8b` or `mistral:7b`
+- **For specialized coding**: `devstral:24b` or `qwen2.5-coder:7b`
+- **For resource-constrained systems**: `llama3.2:3b`
+- **For complex reasoning**: `mixtral:8x7b`
 
-You> Now review this codebase structure
-
-🤖 Assistant> I've reviewed your codebase and found several areas for improvement:
-
-1. **Error Handling**: The utils.py file could benefit from more robust error handling...
-```
-
-## Technical Details
-
-### **Model**: DeepSeek-Reasoner
-- Powered by DeepSeek-R1 with Chain-of-Thought reasoning
-- Real-time reasoning visibility during processing
-- Enhanced problem-solving capabilities
-
-### **Function Call Execution Flow**
-1. **User Input** → Natural language request
-2. **AI Reasoning** → Visible thought process (CoT)
-3. **Function Calls** → Automatic tool execution
-4. **Real-time Feedback** → Operation status and results
-5. **Follow-up Response** → AI processes results and responds
-
-### **Streaming Architecture**
-- **Triple-stream processing**: reasoning + content + tool_calls
-- **Real-time tool execution** during streaming
-- **Automatic follow-up** responses after tool completion
-- **Error recovery** and graceful degradation
+**System Requirements:**
+- **3B models**: 4GB+ RAM
+- **7-8B models**: 8GB+ RAM (recommended)
+- **24B models**: 16GB+ RAM
+- **8x7B models**: 32GB+ RAM
 
 ## Advanced Features
 
@@ -201,34 +283,68 @@ You> Create a complete Flask API with models, routes, and tests
 ✓ Created 4 files: app.py, models.py, routes.py, test_api.py
 ```
 
-### **Project Analysis**
+### **Provider Switching**
+```bash
+# Switch to Ollama
+echo "AI_PROVIDER=ollama" > .env
+
+# Switch to DeepSeek
+echo "AI_PROVIDER=deepseek" > .env
+
+# Restart the application to apply changes
 ```
-You> /add .
-You> Analyze this entire project and suggest a refactoring plan
-
-🤖 Assistant> ⚡ Executing 1 function call(s)...
-→ read_multiple_files
-Based on my analysis of your project, here's a comprehensive refactoring plan...
-```
-
-## File Operations Comparison
-
-| Method | When to Use | How It Works |
-|--------|-------------|--------------|
-| **Automatic Reading** | Most cases - just mention files | AI automatically calls `read_file()` when you reference files |
-| **`/add` Command** | Preload context, bulk operations | Manually adds files to conversation context upfront |
-
-**Recommendation**: Use natural conversation - the AI will automatically read files as needed. Use `/add` only when you want to provide extra context upfront.
 
 ## Troubleshooting
 
-### **Common Issues**
+### **DeepSeek Issues**
 
 **API Key Not Found**
 ```bash
 # Make sure .env file exists with your API key
 echo "DEEPSEEK_API_KEY=your_key_here" > .env
+echo "AI_PROVIDER=deepseek" >> .env
 ```
+
+### **Ollama Issues**
+
+**Connection Refused**
+```bash
+# Make sure Ollama is running
+ollama serve
+
+# Check if models are available
+ollama list
+
+# Pull the model if needed
+ollama pull llama3.2
+```
+
+**Model Not Found**
+```bash
+# List available models
+ollama list
+
+# Browse all tool-compatible models online
+# Visit: https://ollama.com/search?c=tools
+
+# Pull the specific model
+ollama pull your_model_name
+
+# Update .env file
+echo "OLLAMA_MODEL=your_model_name" > .env
+```
+
+**Performance Issues**
+```bash
+# Try a smaller model
+ollama pull phi3
+echo "OLLAMA_MODEL=phi3" > .env
+
+# Or check system resources
+htop  # or Task Manager on Windows
+```
+
+### **General Issues**
 
 **Import Errors**
 ```bash
@@ -242,7 +358,7 @@ uv sync  # or pip install -r requirements.txt
 
 ## Contributing
 
-This is an experimental project showcasing DeepSeek reasoning model capabilities. Contributions are welcome!
+This project showcases multi-provider AI capabilities with both cloud and local models. Contributions are welcome!
 
 ### **Development Setup**
 ```bash
@@ -252,23 +368,35 @@ uv venv
 uv sync
 ```
 
-### **Run**
+### **Run with Different Providers**
 ```bash
-# Run the application (preferred)
-uv run deepseek-eng.py
-```
-or
-```bash
-python3 deepseek-eng.py
+# Run with Ollama (local)
+AI_PROVIDER=ollama uv run deepseek-eng.py
+
+# Run with DeepSeek (cloud)
+AI_PROVIDER=deepseek uv run deepseek-eng.py
 ```
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project is experimental and developed for testing DeepSeek reasoning model capabilities.
-
 ---
 
-> **Note**: This is an experimental project developed to explore the capabilities of DeepSeek's reasoning model with function calling. The AI can automatically read files you mention in conversation, while the `/add` command is available for when you want to preload context. Use responsibly and enjoy the enhanced AI pair programming experience! 🚀
+> **Note**: This project demonstrates the flexibility of modern AI development - choose cloud power with DeepSeek for advanced reasoning, or local privacy with Ollama for cost-free, offline development. The same powerful interface works with both! 🚀
 
+### Quick Start Commands
+
+```bash
+# Ollama Setup (Local & Free)
+ollama serve
+ollama pull qwen3:8b
+echo -e "AI_PROVIDER=ollama\nOLLAMA_MODEL=qwen3:8b" > .env
+uv run deepseek-eng.py
+
+# DeepSeek Setup (Cloud & Advanced)
+echo -e "AI_PROVIDER=deepseek\nDEEPSEEK_API_KEY=your_key" > .env
+uv run deepseek-eng.py
+```
+
+Happy coding with your AI assistant of choice! 🤖✨
